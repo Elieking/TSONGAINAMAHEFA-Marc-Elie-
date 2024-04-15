@@ -1,1 +1,38 @@
+import itertools
 
+def truth_table(variables, expression):
+    # Créer une liste de tuples avec toutes les combinaisons possibles de valeurs booléennes pour les variables
+    combinations = list(itertools.product([0, 1], repeat=len(variables)))
+    # En-tête de la table de vérité
+    header = ' | '.join(variables) + ' | ' + expression
+    print(header)
+    print('-' * len(header))
+
+    # Initialiser des listes pour stocker les termes de la forme canonique
+    f1_terms = []
+    f2_terms = []
+
+    # Pour chaque combinaison de valeurs booléennes, évaluer l'expression et afficher le résultat
+    for combo in combinations:
+        # Créer un dictionnaire pour mapper les valeurs booléennes aux variables
+        variable_map = dict(zip(variables, combo))
+        # Évaluer l'expression en remplaçant les variables par leurs valeurs dans la combinaison actuelle
+        result = eval(expression, variable_map)
+        # Afficher la combinaison de valeurs booléennes suivie du résultat de l'expression
+        print(' | '.join(str(val) for val in combo) + ' | ' + str(int(result)))
+
+        # Si le résultat est vrai, ajouter le terme de la forme canonique à la première forme canonique
+        if result:
+            f1_terms.append("".join([var if combo[i] == 1 else " not " + var for i, var in enumerate(variables)]))
+        # Sinon, construire le terme de la deuxième forme canonique en utilisant des opérateurs "OR"
+        else:
+            f2_terms.append("(" + " + ".join([var if combo[i] == 0 else  " not " + var for i, var in enumerate(variables)]) + ")")
+
+    # Afficher les expressions de la première et de la deuxième forme canonique en bas
+    print("\nPremière forme canonique: " + " + ".join(f1_terms))
+    print("Deuxième forme canonique: " + " * ".join(f2_terms))
+
+# Demander à l'utilisateur d'entrer les variables et l'expression
+variables = str(input('Entrer les variables (ex: "ab" pour deux variables a et b): '))
+expression = str(input("Entrer la fonction logique en utlisant les connecteur AND , OR , NOT (ex:a and not b or b pour ab/+b): "))
+truth_table(variables, expression)
